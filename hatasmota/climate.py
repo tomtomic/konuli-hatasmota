@@ -1,4 +1,4 @@
-"""Tasmota thermostat."""
+"""Tasmota Climate."""
 
 from __future__ import annotations
 
@@ -33,19 +33,19 @@ _LOGGER = logging.getLogger(__name__)
 
 
 @dataclass(frozen=True, kw_only=True)
-class TasmotaThermostatConfig(TasmotaAvailabilityConfig, TasmotaEntityConfig):
-    """Tasmota thermostat configuation."""
+class TasmotaClimateConfig(TasmotaAvailabilityConfig, TasmotaEntityConfig):
+    """Tasmota Climate configuation."""
 
     command_topic: str
     result_topic: str
     state_topic: str
 
     @classmethod
-    def from_discovery_message(cls, config: dict, platform: str) -> TasmotaFanConfig:
+    def from_discovery_message(cls, config: dict, platform: str) -> TasmotaClimateConfig:
         """Instantiate from discovery message."""
         return cls(
             endpoint="climate",
-            idx="iclimate",
+            idx="ic",
             friendly_name=None,
             mac=config[CONF_MAC],
             platform=platform,
@@ -61,10 +61,10 @@ class TasmotaThermostatConfig(TasmotaAvailabilityConfig, TasmotaEntityConfig):
         )
 
 
-class TasmotaThermostat(TasmotaAvailability, TasmotaEntity):
-    """Representation of a Tasmota thermostat."""
+class TasmotaClimate(TasmotaAvailability, TasmotaEntity):
+    """Representation of a Tasmota Climate."""
 
-    _cfg: TasmotaThermostatConfig
+    _cfg: TasmotaClimateConfig
 
     def __init__(self, **kwds: Any):
         """Initialize."""

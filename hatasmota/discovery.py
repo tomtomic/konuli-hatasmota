@@ -21,6 +21,7 @@ from .const import (
     CONF_FULLTOPIC,
     CONF_HOSTNAME,
     CONF_IFAN,
+    CONF_CLIMATE,
     CONF_IP,
     CONF_LIGHT_SUBTYPE,
     CONF_LINK_RGB_CT,
@@ -61,6 +62,7 @@ from .const import (
 )
 from .entity import TasmotaEntity, TasmotaEntityConfig
 from .fan import TasmotaFan, TasmotaFanConfig
+from .climate import TasmotaClimate, TasmotaClimateConfig
 from .light import TasmotaLight, TasmotaLightConfig
 from .models import (
     DeviceDiscoveredCallback,
@@ -123,6 +125,7 @@ TASMOTA_DISCOVERY_SCHEMA = vol.Schema(
         CONF_FULLTOPIC: cv.string,
         CONF_HOSTNAME: cv.string,
         vol.Optional(CONF_IFAN, default=0): cv.bit,  # Added in Tasmota 9.0.0.4
+        vol.Optional(CONF_CLIMATE, default=0): cv.bit,  # Added in Tasmota 9.0.0.4
         vol.Optional(CONF_CAM, default=0): cv.bit,
         CONF_IP: cv.string,
         CONF_LIGHT_SUBTYPE: cv.positive_int,
@@ -409,6 +412,19 @@ def get_fan_entities(
 
     return fan_entities
 
+def get_climate_entities(
+    discovery_msg: dict,
+) -> list[tuple[TasmotaClimateConfig | None, DiscoveryHashType]]:
+    """Generate Climate configuration."""
+    climate_entities: list[tuple[TasmotaClimateConfig | None, DiscoveryHashType]] = []
+
+    entity = None
+    discovery_hash = (discovery_msg[CONF_MAC], "climate", "climate", "climate")
+    if discovery_msg[CONF_CLIMATE]:
+        entity = TasmotaClimateConfig.from_discovery_message(discovery_msg, "climate")
+    climate_entities.append((entity, discovery_hash))
+
+    return climate_entities
 
 def get_switch_entities(
     discovery_msg: dict,
@@ -500,6 +516,8 @@ def get_entities_for_platform(
         entities.extend(get_cover_entities(discovery_msg))
     elif platform == "fan":
         entities.extend(get_fan_entities(discovery_msg))
+    elif platform == "climate":
+        entities.extend(get_climate_entities(discovery_msg))
     elif platform == "light":
         entities.extend(get_light_entities(discovery_msg))
     elif platform == "sensor":
@@ -528,6 +546,8 @@ def get_entity(
         return TasmotaShutter(config=config, mqtt_client=mqtt_client)
     if platform == "fan":
         return TasmotaFan(config=config, mqtt_client=mqtt_client)
+    if platform == "climate":
+        return TasmotaClimate(config=config, mqtt_client=mqtt_client)
     if platform == "light":
         return TasmotaLight(config=config, mqtt_client=mqtt_client)
     if platform == "sensor":
