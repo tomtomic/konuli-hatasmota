@@ -20,6 +20,7 @@ COMMAND_SHUTTER_STOP: Final = "ShutterStop"
 COMMAND_SHUTTER_TILT: Final = "ShutterTilt"
 COMMAND_SPEED: Final = "Speed2"
 COMMAND_WHITE: Final = "White"
+COMMAND_TARGET_TEMPERATURE: Final = "TempTargetSet"
 
 CONF_BUTTON: Final = "btn"
 CONF_DEEP_SLEEP: Final = "dslp"
